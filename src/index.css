@@ -1,0 +1,13 @@
+/* index.css */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(to bottom, #1e1e2f, #3b3b5a);
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+  }
+}
