@@ -88,6 +88,7 @@ function Inventario() {
 
   const handleSave = async () => {
     try {
+      console.log('Datos enviados:', formData); // Log para depuración
       if (modalType === 'add') {
         const { error } = await supabase.from('productos').insert([formData]);
         if (error) throw error;

@@ -85,8 +85,14 @@ function Facturacion() {
 
   const handleSaveCliente = async () => {
     try {
+      if (!formData.nombre || !formData.cedula) {
+        alert('El nombre y la cédula son obligatorios.');
+        return;
+      }
+
       const { error } = await supabase.from('clientes').insert([formData]);
       if (error) throw error;
+
       alert('Cliente agregado exitosamente.');
       handleCloseModal();
       window.location.reload(); // Recargar la página para reflejar los cambios

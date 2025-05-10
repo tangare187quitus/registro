@@ -78,6 +78,12 @@ function Clientes() {
   const handleSave = async () => {
     try {
       if (modalType === 'add') {
+        // Validar datos antes de enviar
+        if (!formData.nombre || !formData.cedula) {
+          alert('El nombre y la cédula son obligatorios.');
+          return;
+        }
+
         const { error } = await supabase.from('clientes').insert([formData]);
         if (error) throw error;
       } else if (modalType === 'edit' && selectedCliente) {
