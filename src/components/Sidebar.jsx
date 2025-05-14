@@ -45,7 +45,7 @@ function Sidebar() {
               width: '100%',
             }}
           >
-            <ListItemText primary="Dashboard" />
+            <ListItemText primary="Registro General" />
           </Button>
         </ListItem>
         <ListItem disablePadding>

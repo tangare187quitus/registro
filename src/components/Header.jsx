@@ -8,7 +8,7 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import logo from '../assets/images/logo.png';
 
 function Header({ darkMode, toggleDarkMode }) {
-  const [promo, setPromo] = useState('🎉 PROMOCIÓN DE LA SEMANA: VINO CATADOR - Llévalo por solo $3.99 🎉');
+  const [promo, setPromo] = useState('🎉 PROMOCIÓN DE LA SEMANA: VINO CATADOR - Llévalo por solo $3.99 ENCUENTRANOS EN LAS FERIAS🎉');
   const [openModal, setOpenModal] = useState(false);
 
   return (
