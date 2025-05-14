@@ -5,7 +5,9 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { Box, CircularProgress, Skeleton, Typography, CssBaseline } from '@mui/material';
+import { Box, CircularProgress, Skeleton, Typography, CssBaseline, useTheme, useMediaQuery, Drawer, IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Inicio from './pages/Inicio';
@@ -20,6 +22,9 @@ import supabase from './services/supabase';
 function App({ darkMode, toggleDarkMode }) {
   const [loading, setLoading] = useState(true); // Estado para el spinner
   const [showSkeleton, setShowSkeleton] = useState(false); // Estado para el skeleton
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     // Simular carga inicial (puedes reemplazar esto con una llamada real a Supabase)
@@ -102,21 +107,71 @@ function App({ darkMode, toggleDarkMode }) {
     );
   }
 
+  // Altura del header según el breakpoint
+  const headerHeight = isMobile ? 220 : 200; // Más espacio arriba para header visible
+
   return (
     <Router>
-      <CssBaseline /> {/* Asegura estilos consistentes */}
-      <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      {/* Header arriba, sin Box fijo */}
+      <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+      {/* Dashboard: Sidebar + Main, con padding-top para dejar espacio al header */}
+      <Box
+        sx={{
+          display: 'flex',
+          flex: 1,
+          minHeight: '100vh',
+          pt: `${headerHeight}px`, // Esto baja todo el dashboard
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
         {/* Sidebar */}
-        <Sidebar />
+        {isMobile ? (
+          <Drawer
+            anchor="left"
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(false)}
+            ModalProps={{ keepMounted: true }}
+            sx={{
+              '& .MuiDrawer-paper': { width: 240 },
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
+              <IconButton onClick={() => setDrawerOpen(false)}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <Sidebar onNavigate={() => setDrawerOpen(false)} />
+          </Drawer>
+        ) : (
+          <Box
+            sx={{
+              width: 240,
+              flexShrink: 0,
+              display: { xs: 'none', md: 'block' },
+              borderRight: 1,
+              borderColor: 'divider',
+              minHeight: `calc(100vh - ${headerHeight}px)`,
+              backgroundColor: theme.palette.background.paper,
+            }}
+          >
+            <Sidebar />
+          </Box>
+        )}
 
-        {/* Contenido principal */}
-        <Box sx={{ flexGrow: 1, marginLeft: '250px', p: 3 }}>
-          <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        {/* Main Content */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            p: { xs: 1, sm: 2, md: 3 },
+            width: '100%',
+            minHeight: `calc(100vh - ${headerHeight}px)`,
+            backgroundColor: theme.palette.background.default,
+            transition: 'padding 0.3s',
+          }}
+        >
           <Routes>
-            {/* Ruta pública para autenticación */}
             <Route path="/auth" element={<Auth />} />
-
-            {/* Rutas protegidas */}
             <Route
               path="/"
               element={
@@ -157,8 +212,6 @@ function App({ darkMode, toggleDarkMode }) {
                 </ProtectedRoute>
               }
             />
-
-            {/* Redirección por defecto */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Box>

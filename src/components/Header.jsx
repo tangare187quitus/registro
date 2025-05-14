@@ -14,30 +14,58 @@ function Header({ darkMode, toggleDarkMode }) {
   return (
     <header
       style={{
-        padding: '1rem',
+        width: '100%',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        zIndex: 1201,
+        boxShadow: darkMode
+          ? '0 2px 8px rgba(0,0,0,0.7)'
+          : '0 2px 8px rgba(0,0,0,0.1)',
+        padding: '1.5rem 2rem 1rem 2rem', // Más padding arriba
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        alignItems: 'stretch',
         backgroundColor: darkMode ? '#121212' : '#ffffff',
         color: darkMode ? '#ffffff' : '#000000',
+        minHeight: '120px', // Altura mínima para que el logo y título no se corten
+        boxSizing: 'border-box',
       }}
     >
       {/* Logo y Título */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1.5rem',
+          flexWrap: 'wrap',
+        }}
+      >
         <img
           src={logo}
           alt="Logo"
           style={{
-            width: '100px',
-            marginRight: '1rem',
+            width: '80px',
+            height: 'auto',
+            marginRight: 0,
+            objectFit: 'contain',
           }}
         />
         <div>
-          <Typography variant="h4" style={{ margin: 0 }}>
+          <Typography variant="h5" style={{ margin: 0, fontWeight: 700 }}>
             TANGARÉ VINOS Y CHOCOLATES
           </Typography>
-          <Typography variant="subtitle1" style={{ margin: 0, fontSize: '0.8rem', color: darkMode ? '#cccccc' : '#666666' }}>
+          <Typography
+            variant="subtitle1"
+            style={{
+              margin: 0,
+              fontSize: '0.9rem',
+              color: darkMode ? '#cccccc' : '#666666',
+              fontWeight: 400,
+            }}
+          >
             Local 187 Centro Comercial Quitus, Quito - Ecuador
           </Typography>
         </div>
