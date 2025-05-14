@@ -89,13 +89,14 @@ function Facturacion() {
         alert('El nombre y la cédula son obligatorios.');
         return;
       }
-
       const { error } = await supabase.from('clientes').insert([formData]);
       if (error) throw error;
-
       alert('Cliente agregado exitosamente.');
       handleCloseModal();
-      window.location.reload(); // Recargar la página para reflejar los cambios
+      // Recargar clientes sin recargar la página
+      const { data, error: fetchError } = await supabase.from('clientes').select('*');
+      if (fetchError) throw fetchError;
+      setClientes(data || []);
     } catch (err) {
       console.error('Error al agregar cliente:', err.message);
       alert('Ocurrió un error al agregar el cliente.');

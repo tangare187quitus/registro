@@ -100,7 +100,10 @@ function Clientes() {
         if (error) throw error;
       }
       handleCloseModal();
-      window.location.reload(); // Recargar la página para reflejar los cambios
+      // Recargar clientes sin recargar la página
+      const { data, error } = await supabase.from('clientes').select('*');
+      if (error) throw error;
+      setClientes(data || []);
     } catch (err) {
       console.error('Error al guardar cambios:', err.message);
       alert('Ocurrió un error al guardar los cambios.');
