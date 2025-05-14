@@ -30,6 +30,7 @@ function Inventario() {
   const [modalType, setModalType] = useState(''); // 'add', 'edit', 'delete'
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [formData, setFormData] = useState({
+    codigo_barras: '',
     nombre: '',
     descripcion: '',
     precio: '',
@@ -66,6 +67,7 @@ function Inventario() {
     setSelectedProduct(product);
     if (product) {
       setFormData({
+        codigo_barras: product.codigo_barras,
         nombre: product.nombre,
         descripcion: product.descripcion,
         precio: product.precio,
@@ -73,6 +75,7 @@ function Inventario() {
       });
     } else {
       setFormData({
+        codigo_barras: '',
         nombre: '',
         descripcion: '',
         precio: '',
@@ -154,6 +157,7 @@ function Inventario() {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell align="center" sx={{ fontWeight: 'bold' }}>Código de Barras</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold' }}>Nombre</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold' }}>Descripción</TableCell>
                   <TableCell align="center" sx={{ fontWeight: 'bold' }}>Precio</TableCell>
@@ -164,13 +168,14 @@ function Inventario() {
               <TableBody>
                 {filteredProductos.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} align="center">
+                    <TableCell colSpan={6} align="center">
                       No hay productos disponibles.
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredProductos.map((producto) => (
                     <TableRow key={producto.id}>
+                      <TableCell align="center">{producto.codigo_barras || '-'}</TableCell>
                       <TableCell align="center">{producto.nombre}</TableCell>
                       <TableCell align="center">{producto.descripcion}</TableCell>
                       <TableCell align="center">${producto.precio.toFixed(2)}</TableCell>
@@ -227,6 +232,13 @@ function Inventario() {
         <DialogContent>
           {modalType !== 'delete' && (
             <>
+              <TextField
+                label="Código de Barras"
+                value={formData.codigo_barras}
+                onChange={(e) => setFormData({ ...formData, codigo_barras: e.target.value })}
+                fullWidth
+                margin="normal"
+              />
               <TextField
                 label="Nombre"
                 value={formData.nombre}
