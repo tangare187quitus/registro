@@ -31,6 +31,8 @@ function Reportes() {
     setOpenReporteMensual(false);
   };
 
+  // Si en el futuro agregas acciones de guardado, usa el mismo patrón: actualiza el estado local tras la acción y no recargues la página.
+
   return (
     <Box sx={{ display: 'flex', padding: '2rem' }}>
       {/* Barra lateral izquierda con botones */}

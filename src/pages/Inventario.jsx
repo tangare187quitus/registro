@@ -109,7 +109,11 @@ function Inventario() {
         if (error) throw error;
       }
       handleCloseModal();
-      window.location.reload(); // Recargar la página para reflejar los cambios
+      // Recargar productos sin recargar la página
+      const { data, error } = await supabase.from('productos').select('*');
+      if (error) throw error;
+      setProductos(data || []);
+      setFilteredProductos(data || []);
     } catch (err) {
       console.error('Error al guardar cambios:', err.message);
       alert('Ocurrió un error al guardar los cambios.');

@@ -36,6 +36,7 @@ function Facturacion() {
     email: '',
     direccion: '',
   });
+  const [facturaCount, setFacturaCount] = useState(101); // Para el contador de facturas
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,6 +156,7 @@ function Facturacion() {
             precio_unitario: p.precio,
           })),
           total,
+          numero_factura: facturaCount,
         },
       ]);
       if (error) throw error;
@@ -162,6 +164,10 @@ function Facturacion() {
       // Mostrar la factura en la pantalla
       alert('Factura guardada exitosamente.');
       generarFacturaPDF();
+      // Liberar campos para nueva factura
+      setSelectedCliente(null);
+      setSelectedProductos([]);
+      setFacturaCount((prev) => prev + 1);
     } catch (err) {
       console.error('Error al guardar la factura:', err.message);
       alert('Ocurrió un error al guardar la factura.');
@@ -170,10 +176,12 @@ function Facturacion() {
 
   const generarFacturaPDF = () => {
     const total = selectedProductos.reduce((acc, producto) => acc + producto.precio * producto.cantidad, 0);
+    const numeroFactura = `#${String(facturaCount).padStart(6, '0')}`;
 
     const facturaHTML = `
       <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ccc; border-radius: 10px; max-width: 600px; margin: auto;">
         <h1 style="text-align: center;">Factura</h1>
+        <p><strong>Número de Factura:</strong> ${numeroFactura}</p>
         <p><strong>Cliente:</strong> ${selectedCliente.nombre}</p>
         <p><strong>Cédula:</strong> ${selectedCliente.cedula}</p>
         <p><strong>Fecha:</strong> ${new Date().toLocaleDateString()}</p>
