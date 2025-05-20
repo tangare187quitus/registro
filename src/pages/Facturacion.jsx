@@ -147,7 +147,7 @@ function Facturacion() {
 
     try {
       // Guardar la factura en la base de datos
-      const { error } = await supabase.from('facturas_guardadas').insert([
+      const { data: facturaData, error: facturaError } = await supabase.from('facturas_guardadas').insert([
         {
           cliente_id: selectedCliente.id,
           productos: selectedProductos.map((p) => ({
@@ -157,17 +157,28 @@ function Facturacion() {
           })),
           total,
           numero_factura: facturaCount,
+          fecha: new Date().toISOString(),
         },
-      ]);
-      if (error) throw error;
+      ]).select().single();
+      if (facturaError) throw facturaError;
 
-      // Mostrar la factura en la pantalla
+      // Descontar stock de productos vendidos
+      for (const producto of selectedProductos) {
+        await supabase
+          .from('productos')
+          .update({ stock: producto.stock - producto.cantidad })
+          .eq('id', producto.id);
+      }
+
       alert('Factura guardada exitosamente.');
       generarFacturaPDF();
-      // Liberar campos para nueva factura
+
+      // Limpiar campos
       setSelectedCliente(null);
       setSelectedProductos([]);
       setFacturaCount((prev) => prev + 1);
+      setSearchCliente('');
+      setSearchProducto('');
     } catch (err) {
       console.error('Error al guardar la factura:', err.message);
       alert('Ocurrió un error al guardar la factura.');

@@ -40,15 +40,19 @@ function Inventario() {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        setLoading(true); // Activar el spinner
+        setLoading(true);
         const { data, error } = await supabase.from('productos').select('*');
         if (error) throw error;
-        setProductos(data || []);
-        setFilteredProductos(data || []);
+        // Ordenar alfabéticamente por nombre
+        const sorted = (data || []).sort((a, b) =>
+          a.nombre.localeCompare(b.nombre)
+        );
+        setProductos(sorted);
+        setFilteredProductos(sorted);
       } catch (err) {
         console.error('Error al cargar productos:', err.message);
       } finally {
-        setLoading(false); // Desactivar el spinner
+        setLoading(false);
       }
     };
     fetchProductos();
@@ -198,22 +202,41 @@ function Inventario() {
                           </Typography>
                         )}
                       </TableCell>
-                      <TableCell align="center">
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          onClick={() => handleOpenModal('edit', producto)}
-                          style={{ marginRight: '0.5rem' }}
-                        >
-                          Modificar
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          onClick={() => handleOpenModal('delete', producto)}
-                        >
-                          Borrar
-                        </Button>
+                      <TableCell>
+                        <Box display="flex" flexDirection="column" gap={1}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="large"
+                            onClick={() => handleOpenModal('edit', producto)}
+                            style={{
+                              marginBottom: '0.7rem',
+                              background: 'rgba(33, 150, 243, 0.08)', // azul transparente
+                              fontWeight: 'normal', // Quitar negrilla
+                              fontSize: '0.9rem',   // Rebajar un punto el tamaño
+                              letterSpacing: '1px',
+                              minWidth: '140px',    // Botón más ancho
+                            }}
+                          >
+                            MODIFICAR
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            size="large"
+                            onClick={() => handleOpenModal('delete', producto)}
+                            style={{
+                              background: 'rgba(244, 67, 54, 0.08)', // rojo transparente
+                              fontWeight: 'normal', // Quitar negrilla
+                              fontSize: '0.9rem',   // Rebajar un punto el tamaño
+                              letterSpacing: '1px',
+                              minWidth: '100px',    // Botón más pequeño horizontalmente
+                              alignSelf: 'flex-start', // Alinear a la izquierda para estilizar
+                            }}
+                          >
+                            BORRAR
+                          </Button>
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))

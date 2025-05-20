@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconButton, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Box } from '@mui/material';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
@@ -6,10 +6,35 @@ import EditIcon from '@mui/icons-material/Edit';
 import SettingsIcon from '@mui/icons-material/Settings';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import logo from '../assets/images/logo.png';
+import supabase from '../services/supabase'; // Importa supabase
 
 function Header({ darkMode, toggleDarkMode }) {
-  const [promo, setPromo] = useState('🎉 PROMOCIÓN DE LA SEMANA: VINO CATADOR - Llévalo por solo $3.99 ENCUENTRANOS EN LAS FERIAS🎉');
+  const [promo, setPromo] = useState('');
   const [openModal, setOpenModal] = useState(false);
+  const [promoId, setPromoId] = useState(null);
+
+  // Cargar promo desde la base de datos
+  useEffect(() => {
+    const fetchPromo = async () => {
+      const { data, error } = await supabase.from('promo_marquesina').select('*').order('id', { ascending: false }).limit(1).single();
+      if (!error && data) {
+        setPromo(data.mensaje);
+        setPromoId(data.id);
+      }
+    };
+    fetchPromo();
+  }, []);
+
+  // Guardar promo en la base de datos
+  const handleSavePromo = async () => {
+    if (promoId) {
+      await supabase.from('promo_marquesina').update({ mensaje: promo }).eq('id', promoId);
+    } else {
+      const { data } = await supabase.from('promo_marquesina').insert({ mensaje: promo }).select().single();
+      setPromoId(data.id);
+    }
+    setOpenModal(false);
+  };
 
   return (
     <header
@@ -23,14 +48,14 @@ function Header({ darkMode, toggleDarkMode }) {
         boxShadow: darkMode
           ? '0 2px 8px rgba(0,0,0,0.7)'
           : '0 2px 8px rgba(0,0,0,0.1)',
-        padding: '1.5rem 2rem 1rem 2rem', // Más padding arriba
+        padding: '1.5rem 2rem 1rem 2rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'stretch',
         backgroundColor: darkMode ? '#121212' : '#ffffff',
         color: darkMode ? '#ffffff' : '#000000',
-        minHeight: '120px', // Altura mínima para que el logo y título no se corten
+        minHeight: '120px',
         boxSizing: 'border-box',
       }}
     >
@@ -155,7 +180,7 @@ function Header({ darkMode, toggleDarkMode }) {
             rows={4}
             style={{ marginBottom: '1rem' }}
           />
-          <Button variant="contained" color="primary" onClick={() => setOpenModal(false)}>
+          <Button variant="contained" color="primary" onClick={handleSavePromo}>
             Guardar
           </Button>
         </DialogContent>
